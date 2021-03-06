@@ -1,0 +1,55 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: contact-form
+
+# app and org for use with dashboard.serverless.com
+app: serverless-contact-form
+org: madsem
+
+useDotenv: true
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 128 # optional, in MB, default is 1024
+  timeout: 10 # optional, in seconds, default is 6
+  stage: prod # Default stage to be used. Default is "dev"
+  region: eu-central-1 # Default region to be used. Default is "us-east-1"
+  lambdaHashingVersion: 20201221
+  apiGateway:
+    shouldStartNameWithService: true
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "ses:SendEmail"
+            - "ses:SendRawEmail"
+          Resource: ["*"]
+
+functions:
+  contact:
+    handler: handler.contact
+    description: Forward contact form submissions from all websites to support # optional, Description to publish to AWS
+    environment:
+      VERIFIED_EMAIL: ${env:VERIFIED_EMAIL}
+    events:
+      - http:
+          method: post
+          path: /contact
+          cors: true

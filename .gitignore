@@ -1,0 +1,5 @@
+node_modules
+.env
+s_*
+serverless_sdk
+.serverless
